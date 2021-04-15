@@ -1,5 +1,7 @@
-#include <knx.h>
+//#include <knx.h>
 #include <Arduino.h>
+#include "lib/knx.h"
+#include <math.h>
 
 #ifdef ARDUINO_ARCH_ESP8266
 #include <WiFiManager.h>
@@ -8,6 +10,8 @@
 // #define verbose         //enable debug output
 #define channelCount 3  //defining number of active channels
 #define GOcount 5      //defining how much GO 1 Channel can have
+#define PARAMCOUNT 16 //defining how much param bytes 1 Channel has
+#define PI 3.14159265
 
 // channel structure containing every information needed for a channel
 struct Channel
@@ -20,10 +24,10 @@ struct Channel
     uint8_t switchOnEndValue = 0; // needed for dim to light
     bool statusOn = false; // containing information wether output is on or off
     long refTime; // needed for all dimming executions
-    uint32_t switchOnDelay = 500; // should be filled by ets parameter
-    uint32_t switchOffDelay = 500; // should be filled by ets parameter
-    uint32_t timePerDimStepUp = 5000; // should be filled by ets parameter
-    uint32_t timePerDimStepDown = 5000; // should be filled by ets parameter
+    uint32_t switchOnDelay = 500; // filled by ets parameter
+    uint32_t switchOffDelay = 500; // filled by ets parameter
+    uint32_t timePerDimStepUp = 5000; // filled by ets parameter
+    uint32_t timePerDimStepDown = 5000; // filled by ets parameter
     int8_t activeDimStep = 0; // dim step out of dim step list only if dimming is active
     uint8_t dimStartValue = 0; // dim start value for rel dimming
     uint8_t outPutPin; // output pin of channel
@@ -36,7 +40,7 @@ struct Channel
 }Channels[channelCount];
 
 // asining Output Pins
-uint8_t pinConnection[channelCount] = {D1, D2, D3};
+uint8_t pinConnection[channelCount] = {5, 4, 0};
 
 // assining dim Step values for relative dimming
 int dimStepList[16] = {0, -100, -50, -25, -12, -6, -3, -1, 0, 100, 50, 25, 12, 6, 3, 1};
@@ -217,6 +221,10 @@ void switchDimming(int channel)
     if (Channels[channel].switchOnEndValue > 0)
     {
         // calculate acutal dimstep
+        //double time = (millis() - Channels[channel].refTime) * 1.0 / Channels[channel].switchOnDelay * Channels[channel].DayValue;
+        //Channels[channel].activeValue = 100.0 * (1.0-cos(PI*time/200));
+        //=1-COS(1/2*PI()/100*B7);
+        
         Channels[channel].activeValue = (millis() - Channels[channel].refTime) * 1.0 / Channels[channel].switchOnDelay * Channels[channel].DayValue;
         // if time is over stop set to end value and stop diming
         if ((millis() - Channels[channel].refTime) >= Channels[channel].switchOnDelay)
@@ -287,17 +295,25 @@ void setup()
             // connect output pin
             Channels[i].outPutPin = pinConnection[i];
 
+            // read params
+            Channels[i].switchOnDelay = knx.paramInt(i * PARAMCOUNT + 0);
+            Channels[i].switchOffDelay = knx.paramInt(i * PARAMCOUNT + 4);
+            Channels[i].timePerDimStepUp = knx.paramInt(i * PARAMCOUNT + 8);
+            Channels[i].timePerDimStepDown = knx.paramInt(i * PARAMCOUNT + 12);
+
             print("init Channel");
             println(i + 1);
         }
     }
+
+    
 
     // pin or GPIO the programming led is connected to. Default is LED_BUILTIN
     // knx.ledPin(LED_BUILTIN);
     // is the led active on HIGH or low? Default is LOW
     // knx.ledPinActiveOn(HIGH);
     // pin or GPIO programming button is connected to. Default is 0
-    knx.buttonPin(D8);
+    knx.buttonPin(15);
 
     // start the framework.
     knx.start();

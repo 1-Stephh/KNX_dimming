@@ -11,9 +11,33 @@
         <ApplicationProgram Id="M-00FA_A-ABCD-78-0000" ApplicationNumber="43981" ApplicationVersion="120" ProgramType="ApplicationProgram" MaskVersion="MV-57B0" Name="TK DIM" LoadProcedureStyle="MergedProcedure" PeiType="0" DefaultLanguage="en-US" DynamicTableManagement="false" Linkable="false" MinEtsVersion="4.0">
           <Static>
             <Code>
-              <RelativeSegment Id="M-00FA_A-ABCD-78-0000_RS-04-00000" Name="Parameters" Offset="0" Size="0" LoadStateMachine="4" />
+              <RelativeSegment Id="M-00FA_A-ABCD-78-0000_RS-04-00000" Name="Parameters" Offset="0" Size="16" LoadStateMachine="4" />
             </Code>
-            <Parameters />
+            <ParameterTypes>
+              <ParameterType Id="M-00FA_A-ABCD-78-0000_PT-ms" Name="ms">
+                <TypeNumber SizeInBit="32" Type="signedInt" minInclusive="0" maxInclusive="30000" />
+              </ParameterType>
+            </ParameterTypes>
+            <Parameters>
+              <Parameter Id="M-00FA_A-ABCD-78-0000_P-1" Name="Kanal A" ParameterType="M-00FA_A-ABCD-78-0000_PT-ms" Text="Anlaufzeit beim Schalten (dim to light)" Value="500">
+                <Memory CodeSegment="M-00FA_A-ABCD-78-0000_RS-04-00000" Offset="0" BitOffset="0" />
+              </Parameter>
+              <Parameter Id="M-00FA_A-ABCD-78-0000_P-2" Name="Kanal A" ParameterType="M-00FA_A-ABCD-78-0000_PT-ms" Text="Ausschaltzeit beim Schalten (dim to dark" Value="500">
+                <Memory CodeSegment="M-00FA_A-ABCD-78-0000_RS-04-00000" Offset="4" BitOffset="0" />
+              </Parameter>
+              <Parameter Id="M-00FA_A-ABCD-78-0000_P-3" Name="Kanal A" ParameterType="M-00FA_A-ABCD-78-0000_PT-ms" Text="Zeit eines Dimmschritts hell" Value="5000">
+                <Memory CodeSegment="M-00FA_A-ABCD-78-0000_RS-04-00000" Offset="8" BitOffset="0" />
+              </Parameter>
+              <Parameter Id="M-00FA_A-ABCD-78-0000_P-4" Name="Kanal A" ParameterType="M-00FA_A-ABCD-78-0000_PT-ms" Text="Zeit eines Dimmschritts dunkel" Value="5000">
+                <Memory CodeSegment="M-00FA_A-ABCD-78-0000_RS-04-00000" Offset="12" BitOffset="0" />
+              </Parameter>
+            </Parameters>
+            <ParameterRefs>
+              <ParameterRef Id="M-00FA_A-ABCD-78-0000_P-1_R-1" RefId="M-00FA_A-ABCD-78-0000_P-1" />
+              <ParameterRef Id="M-00FA_A-ABCD-78-0000_P-2_R-2" RefId="M-00FA_A-ABCD-78-0000_P-2" />
+              <ParameterRef Id="M-00FA_A-ABCD-78-0000_P-3_R-3" RefId="M-00FA_A-ABCD-78-0000_P-3" />
+              <ParameterRef Id="M-00FA_A-ABCD-78-0000_P-4_R-4" RefId="M-00FA_A-ABCD-78-0000_P-4" />
+            </ParameterRefs>
             <ComObjectTable>
               <ComObject Id="M-00FA_A-ABCD-78-0000_O-1" Name="Kanal A" Text="Kanal A" Number="1" FunctionText="Schalten" ObjectSize="1 Bit" ReadFlag="Disabled" WriteFlag="Enabled" CommunicationFlag="Enabled" TransmitFlag="Disabled" UpdateFlag="Disabled" ReadOnInitFlag="Disabled" />
               <ComObject Id="M-00FA_A-ABCD-78-0000_O-2" Name="Kanal A" Text="Kanal A" Number="2" FunctionText="Dimmen relativ" ObjectSize="4 Bit" ReadFlag="Disabled" WriteFlag="Enabled" CommunicationFlag="Enabled" TransmitFlag="Disabled" UpdateFlag="Disabled" ReadOnInitFlag="Disabled" />
@@ -52,10 +76,10 @@
             <AssociationTable MaxEntries="65000" />
             <LoadProcedures>
               <LoadProcedure MergeId="2">
-                <LdCtrlRelSegment LsmIdx="4" Size="0" Mode="0" Fill="0" AppliesTo="full" />
+                <LdCtrlRelSegment LsmIdx="4" Size="16" Mode="0" Fill="0" AppliesTo="full" />
               </LoadProcedure>
               <LoadProcedure MergeId="4">
-                <LdCtrlWriteRelMem ObjIdx="4" Offset="0" Size="0" Verify="true" />
+                <LdCtrlWriteRelMem ObjIdx="4" Offset="0" Size="16" Verify="true" />
               </LoadProcedure>
             </LoadProcedures>
             <Options />
@@ -63,6 +87,10 @@
           <Dynamic>
             <ChannelIndependentBlock>
               <ParameterBlock Id="M-00FA_A-ABCD-78-0000_PB-1" Name="ParameterPage" Text="Allgemeine Parameter">
+                <ParameterRefRef RefId="M-00FA_A-ABCD-78-0000_P-1_R-1" />
+                <ParameterRefRef RefId="M-00FA_A-ABCD-78-0000_P-2_R-2" />
+                <ParameterRefRef RefId="M-00FA_A-ABCD-78-0000_P-3_R-3" />
+                <ParameterRefRef RefId="M-00FA_A-ABCD-78-0000_P-4_R-4" />
                 <ComObjectRefRef RefId="M-00FA_A-ABCD-78-0000_O-1_R-1" />
                 <ComObjectRefRef RefId="M-00FA_A-ABCD-78-0000_O-2_R-2" />
                 <ComObjectRefRef RefId="M-00FA_A-ABCD-78-0000_O-3_R-3" />
